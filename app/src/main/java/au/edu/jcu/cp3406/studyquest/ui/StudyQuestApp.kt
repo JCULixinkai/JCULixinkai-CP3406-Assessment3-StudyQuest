@@ -1,6 +1,7 @@
 package au.edu.jcu.cp3406.studyquest.ui
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Home
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -61,19 +63,14 @@ fun StudyQuestApp(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
+            NavigationBar(
+                modifier = Modifier.navigationBarsPadding(),
+                containerColor = MaterialTheme.colorScheme.surface,
+            ) {
                 StudyQuestDestination.entries.forEach { destination ->
                     NavigationBarItem(
                         selected = currentRoute == destination.route,
-                        onClick = {
-                            navController.navigate(destination.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
+                        onClick = { navController.navigateToTopLevelDestination(destination) },
                         icon = { Icon(destination.icon, contentDescription = destination.label) },
                         label = { Text(destination.label) },
                         colors = NavigationBarItemDefaults.colors(
@@ -94,9 +91,9 @@ fun StudyQuestApp(
             composable(StudyQuestDestination.Landing.route) {
                 LandingScreen(
                     stats = landingViewModel.stats.collectAsStateWithLifecycle().value,
-                    onStartQuiz = { navController.navigate(StudyQuestDestination.Quiz.route) },
-                    onReview = { navController.navigate(StudyQuestDestination.Review.route) },
-                    onStats = { navController.navigate(StudyQuestDestination.Stats.route) },
+                    onStartQuiz = { navController.navigateToTopLevelDestination(StudyQuestDestination.Quiz) },
+                    onReview = { navController.navigateToTopLevelDestination(StudyQuestDestination.Review) },
+                    onStats = { navController.navigateToTopLevelDestination(StudyQuestDestination.Stats) },
                 )
             }
             composable(StudyQuestDestination.Quiz.route) {
@@ -106,15 +103,15 @@ fun StudyQuestApp(
                     onSelectAnswer = quizViewModel::selectAnswer,
                     onSubmitAnswer = quizViewModel::submitAnswer,
                     onNextQuestion = quizViewModel::nextQuestion,
-                    onReview = { navController.navigate(StudyQuestDestination.Review.route) },
-                    onStats = { navController.navigate(StudyQuestDestination.Stats.route) },
+                    onReview = { navController.navigateToTopLevelDestination(StudyQuestDestination.Review) },
+                    onStats = { navController.navigateToTopLevelDestination(StudyQuestDestination.Stats) },
                 )
             }
             composable(StudyQuestDestination.Review.route) {
                 ReviewScreen(
                     reviewQuestions = reviewViewModel.reviewQuestions.collectAsStateWithLifecycle().value,
                     onMarkMastered = reviewViewModel::markMastered,
-                    onStartQuiz = { navController.navigate(StudyQuestDestination.Quiz.route) },
+                    onStartQuiz = { navController.navigateToTopLevelDestination(StudyQuestDestination.Quiz) },
                 )
             }
             composable(StudyQuestDestination.Stats.route) {
@@ -137,3 +134,14 @@ fun StudyQuestApp(
     }
 }
 
+private fun NavHostController.navigateToTopLevelDestination(destination: StudyQuestDestination) {
+    if (currentDestination?.route == destination.route) return
+
+    navigate(destination.route) {
+        popUpTo(graph.findStartDestination().id) {
+            saveState = destination != StudyQuestDestination.Landing
+        }
+        launchSingleTop = true
+        restoreState = destination != StudyQuestDestination.Landing
+    }
+}
