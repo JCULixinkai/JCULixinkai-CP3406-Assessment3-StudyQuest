@@ -2,7 +2,6 @@ package au.edu.jcu.cp3406.studyquest.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -34,13 +33,6 @@ private val HighContrastLight = lightColorScheme(
     outline = Color.Black,
 )
 
-private val StandardDark = darkColorScheme(
-    primary = Color(0xFF9FDDB8),
-    secondary = Color(0xFFBFC7FF),
-    background = Color(0xFF101511),
-    surface = Color(0xFF171D19),
-)
-
 @Composable
 fun StudyQuestTheme(
     highContrast: Boolean,
@@ -58,9 +50,6 @@ fun StudyQuestTheme(
     )
 }
 
-@Suppress("UnusedPrivateProperty")
-private val unusedDarkScheme = StandardDark
-
 private fun largeTypography(): Typography {
     val base = Typography()
     return base.copy(
@@ -77,4 +66,3 @@ private fun largeTypography(): Typography {
 
 private fun TextStyle.scale(multiplier: Float): TextStyle =
     copy(fontSize = (fontSize.value * multiplier).sp)
-

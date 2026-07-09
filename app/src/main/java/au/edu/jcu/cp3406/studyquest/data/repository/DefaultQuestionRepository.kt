@@ -31,7 +31,7 @@ class DefaultQuestionRepository @Inject constructor(
 
         return try {
             val response = apiService.fetchQuestions(
-                amount = amount.coerceIn(1, 10),
+                amount = amount.coerceIn(1, 20),
                 category = category.apiCategory,
                 difficulty = difficulty.apiValue,
             )

@@ -30,8 +30,9 @@ class QuizViewModelTest {
     @Test
     fun `loads questions and records submitted answer`() = runTest {
         val progressRepository = FakeProgressRepository()
+        val questionRepository = FakeQuestionRepository()
         val viewModel = QuizViewModel(
-            questionRepository = FakeQuestionRepository(),
+            questionRepository = questionRepository,
             progressRepository = progressRepository,
             settingsRepository = FakeSettingsRepository(),
             quizScorer = QuizScorer(),
@@ -40,6 +41,7 @@ class QuizViewModelTest {
         advanceUntilIdle()
 
         assertThat(viewModel.uiState.value.questions).hasSize(1)
+        assertThat(questionRepository.requestedAmount).isEqualTo(5)
 
         viewModel.selectAnswer("Room")
         viewModel.submitAnswer()
@@ -49,18 +51,40 @@ class QuizViewModelTest {
         assertThat(progressRepository.recordedAnswers).hasSize(1)
     }
 
+    @Test
+    fun `requests twenty questions when daily goal is twenty`() = runTest {
+        val questionRepository = FakeQuestionRepository()
+        QuizViewModel(
+            questionRepository = questionRepository,
+            progressRepository = FakeProgressRepository(),
+            settingsRepository = FakeSettingsRepository(UserSettings(dailyGoal = 20)),
+            quizScorer = QuizScorer(),
+        )
+
+        advanceUntilIdle()
+
+        assertThat(questionRepository.requestedAmount).isEqualTo(20)
+    }
+
     private class FakeQuestionRepository : QuestionRepository {
+        var requestedAmount: Int = 0
+
         override suspend fun loadQuestions(
             categoryIds: List<String>,
             difficulty: Difficulty,
             amount: Int,
-        ): QuestionLoadResult = QuestionLoadResult.Success(listOf(sampleQuestion()))
+        ): QuestionLoadResult {
+            requestedAmount = amount
+            return QuestionLoadResult.Success(listOf(sampleQuestion()))
+        }
 
         override suspend fun findQuestion(id: Long): Question? = sampleQuestion()
     }
 
-    private class FakeSettingsRepository : SettingsRepository {
-        private val mutableSettings = MutableStateFlow(UserSettings(dailyGoal = 5))
+    private class FakeSettingsRepository(
+        initialSettings: UserSettings = UserSettings(dailyGoal = 5),
+    ) : SettingsRepository {
+        private val mutableSettings = MutableStateFlow(initialSettings)
         override val settings: Flow<UserSettings> = mutableSettings
         override suspend fun currentSettings(): UserSettings = mutableSettings.value
         override suspend fun updateDailyGoal(goal: Int) {}
@@ -97,4 +121,3 @@ private fun sampleQuestion(): Question = Question(
     correctAnswer = "Room",
     explanation = "Room stores structured local data.",
 )
-

@@ -61,7 +61,7 @@ class QuizViewModel @Inject constructor(
             when (val result = questionRepository.loadQuestions(
                 categoryIds = settings.enabledCategoryIds,
                 difficulty = settings.preferredDifficulty,
-                amount = settings.dailyGoal.coerceIn(5, 10),
+                amount = settings.dailyGoal.coerceIn(5, 20),
             )) {
                 is QuestionLoadResult.Success -> {
                     sessionId = progressRepository.startSession(
@@ -139,4 +139,3 @@ class QuizViewModel @Inject constructor(
         }
     }
 }
-
