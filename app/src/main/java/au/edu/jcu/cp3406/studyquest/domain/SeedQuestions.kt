@@ -54,6 +54,54 @@ object SeedQuestions {
             correct = "Store data locally when possible",
             explanation = "Local storage reduces unnecessary sharing and supports privacy by design.",
         ),
+        seed(
+            categoryId = "general",
+            difficulty = Difficulty.Medium,
+            question = "Which method checks learning without looking at notes first?",
+            answers = listOf("Active recall", "Copying text", "Changing the font", "Skipping hard topics"),
+            correct = "Active recall",
+            explanation = "Active recall asks the learner to retrieve knowledge before checking the answer.",
+        ),
+        seed(
+            categoryId = "science",
+            difficulty = Difficulty.Easy,
+            question = "In an experiment, what is a variable?",
+            answers = listOf("Something that can change", "A fixed conclusion", "A finished report", "A type of calculator"),
+            correct = "Something that can change",
+            explanation = "Variables are factors that can change and may affect the result of an experiment.",
+        ),
+        seed(
+            categoryId = "computers",
+            difficulty = Difficulty.Medium,
+            question = "Why do many mobile apps use JSON from an API?",
+            answers = listOf("It hides the app name", "It transfers structured data", "It deletes local files", "It replaces the UI"),
+            correct = "It transfers structured data",
+            explanation = "JSON is a common format for sending structured information between a server and an app.",
+        ),
+        seed(
+            categoryId = "maths",
+            difficulty = Difficulty.Easy,
+            question = "What is the mean of 4, 6, and 8?",
+            answers = listOf("4", "6", "8", "18"),
+            correct = "6",
+            explanation = "The mean is the total divided by the number of values: 18 / 3 = 6.",
+        ),
+        seed(
+            categoryId = "history",
+            difficulty = Difficulty.Medium,
+            question = "What is a primary source in history?",
+            answers = listOf("A source from the time being studied", "A modern summary only", "A random opinion", "A fictional scene"),
+            correct = "A source from the time being studied",
+            explanation = "Primary sources are original evidence from the period or event being investigated.",
+        ),
+        seed(
+            categoryId = "maths",
+            difficulty = Difficulty.Medium,
+            question = "If a score rises from 12 to 15, how much did it increase?",
+            answers = listOf("2", "3", "12", "27"),
+            correct = "3",
+            explanation = "The increase is the new value minus the old value: 15 - 12 = 3.",
+        ),
     )
 
     private fun seed(
@@ -77,4 +125,3 @@ object SeedQuestions {
         )
     }
 }
-
